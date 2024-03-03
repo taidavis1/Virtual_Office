@@ -1,12 +1,15 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {connect} from 'react-redux';
+import {connect, useDispatch} from 'react-redux';
 import CanvasContext from './CanvasContext';
 
 import {MOVE_DIRECTIONS, MAP_DIMENSIONS, TILE_SIZE} from './mapConstants';
 import { MY_CHARACTER_INIT_CONFIG } from './characterConstants';
 import {checkMapCollision} from './utils';
+import { update } from './slices/allCharactersSlice';
+
 
 const GameLoop = ({children, allCharactersData}) => {
+    const dp = useDispatch();
     const canvasRef = useRef(null);
     const [context, setContext] = useState(null);
     useEffect(() => {
@@ -25,6 +28,19 @@ const GameLoop = ({children, allCharactersData}) => {
         if (MOVE_DIRECTIONS[key]) {
             // ***********************************************
             // TODO: Add your move logic here
+            
+            const newPos = {                         // Add current position to key data ex: key w store [0,-1] x = 1 , y = -1     
+                x: currentPosition.x + MOVE_DIRECTIONS[key][0],
+                y: currentPosition.y + MOVE_DIRECTIONS[key][1]
+            };
+
+            dp(update({                               // update character position with redux
+                ...allCharactersData,
+                [MY_CHARACTER_INIT_CONFIG.id]: {
+                    ...mycharacterData,
+                    position: newPos,
+                }
+            }));
         }
     }, [mycharacterData]);
 
