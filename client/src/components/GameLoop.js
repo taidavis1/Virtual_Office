@@ -29,7 +29,7 @@ const GameLoop = ({children, allCharactersData}) => {
             // ***********************************************
             // TODO: Add your move logic here
             
-            const newPos = {                         // Add current position to key data ex: key w store [0,-1] x = 1 , y = -1     
+            const newPos = {                         // Add current position to key data ex: key w store [0,-1] x = 0 , y = -1     
                 x: currentPosition.x + MOVE_DIRECTIONS[key][0],
                 y: currentPosition.y + MOVE_DIRECTIONS[key][1]
             };
