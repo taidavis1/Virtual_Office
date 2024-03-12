@@ -15,6 +15,7 @@ import { getDatabase } from "firebase/database";
 //   appId: "1:416890512159:web:59d7b08b2333270e6f062a",
 //   measurementId: "G-JDJCEPS4YH"
 // };
+
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_apiKey,
     authDomain: process.env.REACT_APP_authDomain,
