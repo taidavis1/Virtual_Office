@@ -1,7 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import CanvasContext from './CanvasContext';
-
+import {firebaseDatabase} from "../firebase/firebase";
+import {ref , update as updateFirebase} from "firebase/database";
 import {MOVE_DIRECTIONS, MAP_DIMENSIONS, TILE_SIZE} from './mapConstants';
 import { MY_CHARACTER_INIT_CONFIG } from './characterConstants';
 import {checkMapCollision} from './utils';
@@ -16,6 +17,7 @@ const GameLoop = ({children, allCharactersData}) => {
         // frameCount used for re-rendering child components
         console.log("initial setContext");
         setContext({canvas: canvasRef.current.getContext('2d'), frameCount: 0});
+        console.log(allCharactersData);
     }, [setContext]);
 
     // keeps the reference to the main rendering loop
@@ -34,13 +36,17 @@ const GameLoop = ({children, allCharactersData}) => {
                 y: currentPosition.y + MOVE_DIRECTIONS[key][1]
             };
 
-            dp(update({                               // update character position with redux
-                ...allCharactersData,
-                [MY_CHARACTER_INIT_CONFIG.id]: {
-                    ...mycharacterData,
-                    position: newPos,
-                }
-            }));
+            updateFirebase(ref(firebaseDatabase ,`users/${MY_CHARACTER_INIT_CONFIG.id}` ) , {
+                position: newPos
+            }) // update to firebase new position
+
+            // dp(update({        // update character position with redux
+            //     ...allCharactersData,
+            //     [MY_CHARACTER_INIT_CONFIG.id]: {
+            //         ...mycharacterData,
+            //         position: newPos,
+            //     }
+            // }));
         }
     }, [mycharacterData]);
 

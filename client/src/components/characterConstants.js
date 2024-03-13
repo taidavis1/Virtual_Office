@@ -18,3 +18,24 @@ export const MY_CHARACTER_INIT_CONFIG = {
     position: {x: 12, y: 12},
     characterClass: 'ENGINEER',
 };
+
+// export const MY_CHARACTER_INIT_CONFIG = [
+//     {
+//         name: 'Amanda',
+//         id: uuid(),
+//         position: {x: 12, y: 12},
+//         characterClass: 'ENGINEER',
+//     },
+//     {
+//         name: 'Tai',
+//         id: uuid(),
+//         position: {x: 10, y: 8},
+//         characterClass: 'ENGINEER',
+//     },
+//     {
+//         name: 'John',
+//         id: uuid(),
+//         position: {x: 11, y: 4},
+//         characterClass: 'ENGINEER',
+//     },
+// ];
