@@ -14,13 +14,23 @@
 
 .main-canvas {
   display: block;
-  margin: 25px auto;
+  margin: 0px auto;
 }
 
 .videos {
   text-align: center;
 }
 
+.videoDiv{
+  display: flex;
+  background-color: #252524;
+  justify-content: center;
+  justify-items: center;
+  margin: 10px auto;
+}
+
 video {
   margin: 0 10px;
 }
+
+

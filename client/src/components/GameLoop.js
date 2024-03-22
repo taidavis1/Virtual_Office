@@ -7,6 +7,7 @@ import {MOVE_DIRECTIONS, MAP_DIMENSIONS, TILE_SIZE} from './mapConstants';
 import { MY_CHARACTER_INIT_CONFIG } from './characterConstants';
 import {checkMapCollision} from './utils';
 import { update } from './slices/allCharactersSlice';
+import {io} from 'socket.io-client';
 
 
 const GameLoop = ({children, allCharactersData}) => {
