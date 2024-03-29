@@ -24,7 +24,7 @@ io.on("connection", (socket) => {
             signal: data.signal,
             from: socket.id
         });
-        console.log('Offer sent from', socket.id, 'to', data.to);
+        console.log('Call sent from', socket.id, 'to', data.to);
     });
 
     socket.on("sendAnswer", (data) => {

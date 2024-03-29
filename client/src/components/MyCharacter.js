@@ -22,12 +22,10 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
 
         navigator.mediaDevices.getUserMedia({ video: { width: 200 } }).then(view => {
 
-          let cam = CamRef.current;
-          cam.srcObject = view;
-          cam.onloadedmetadata = () => {
-            cam.play().catch(err => console.error("Error:", err));
-          };
-      
+          if (CamRef.current){
+            CamRef.current.srcObject = view;
+          }
+
           peerRef.current = new Peer({
             initiator: true,
             trickle: false,
@@ -49,13 +47,14 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
           });
         });
       
-        const handleReceiveAnswer = ({ signal }) => {
+
+        webrtcSocket.on('receiveAnswer', ({signal}) => {
           if (peerRef.current) {
             peerRef.current.signal(signal);
           }
-        };
-      
-        const handleReceiveCall = ({ from, signal }) => {
+        });
+
+        webrtcSocket.on('receiveCall', ({ from, signal }) => {
 
           if (peerRef.current) {
             peerRef.current.destroy();
@@ -78,11 +77,7 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
               client2Video.current.srcObject = remoteStream;
             }
           });
-        };
-      
-        webrtcSocket.on('receiveAnswer', handleReceiveAnswer);
-        webrtcSocket.on('receiveCall', handleReceiveCall);
-      
+        });
 
       }, [webrtcSocket, CamRef, client2Video]);
 
