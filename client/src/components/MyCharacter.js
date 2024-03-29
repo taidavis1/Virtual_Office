@@ -10,85 +10,99 @@ import {update as updateAllCharactersData} from './slices/allCharactersSlice'
 import { firebaseDatabase } from '../firebase/firebase';
 import Peer from "simple-peer";
 
+
 function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData, webrtcSocket }) {
     const context = useContext(CanvasConext);
     const dp = useDispatch();
-    const camRef = useRef(null);
+    const CamRef = useRef(null);
+    const client2Video = useRef(null);
     const peerRef = useRef(null);
+  
     useEffect(() => {
 
-        // Object.values(MY_CHARACTER_INIT_CONFIG).forEach(character => {
-        //     console.log(character);
-        //     const myInitData = {
-        //         ...character,
-        //         socketId: webrtcSocket.id,
-        //     };
-        //     addFirebase(ref(firebaseDatabase , `users/${character.id}`) , myInitData)  // Add data to firebase
-        // });
+        navigator.mediaDevices.getUserMedia({ video: { width: 200 } }).then(view => {
 
-        const myInitData = {
-            ...MY_CHARACTER_INIT_CONFIG,
-            socketId: webrtcSocket.id,
-        };
-
-        addFirebase(ref(firebaseDatabase , `users/${MY_CHARACTER_INIT_CONFIG.id}`) , myInitData)  // Add data to firebase
-
-        // const users = {};
-        // const myId = MY_CHARACTER_INIT_CONFIG.id;
-        // users[myId] = myInitData;
-        // updateAllCharactersData(users);
-
-
-        navigator.mediaDevices.getUserMedia({video: {width: 200}}).then(view => {
-            if (camRef.current) {
-                camRef.current.srcObject = view;
-            }
-            peerRef.current = new Peer(
-                {
-                    initiator: true,
-                    trickle: false,
-                    stream: view,
-                }
-            );
+          let cam = CamRef.current;
+          cam.srcObject = view;
+          cam.onloadedmetadata = () => {
+            cam.play().catch(err => console.error("Error:", err));
+          };
+      
+          peerRef.current = new Peer({
+            initiator: true,
+            trickle: false,
+            stream: view,
+          });
+      
+          peerRef.current.on('signal', signal => {
             
-            peerRef.current.on('signal' , (signal) => {
-                webrtcSocket.emit('sendCall' , {to: 'Client-2' , from: webrtcSocket.id , signal})      // Harded coded for CLient-2 having 
-                                                                                                     // read the socket id from firebase yet
-            });
-            
-            // webrtcSocket.on('sendCall', ({ from, signal }) => {
+            const usersRef = ref(firebaseDatabase, 'users');
 
-            //     console.log('Received offer signal:', signal);
-
-            //     // if (!peerRef.current) {
-
-            //     //     peerRef.current = new Peer({
-            //     //         initiator: false,
-            //     //         trickle: false,
-            //     //         stream: view,
-            //     //     });
-
-            //     //     peerRef.current.signal(signal);
-            //     // };
-            // });
-            
+            onValue(usersRef, data => {
+              const users = data.val();
+              const client2 = Object.values(users).find(u => u.socketId !== webrtcSocket.id);
+      
+              if (client2) {
+                webrtcSocket.emit('sendCall', { to: client2.socketId, from: webrtcSocket.id, signal });
+              }
+            }, { onlyOnce: true });
+          });
         });
-
-        webrtcSocket.on('sendCall', ({ from, signal }) => {
-
-            console.log('Received offer signal:', signal);
+      
+        const handleReceiveAnswer = ({ signal }) => {
+          if (peerRef.current) {
             peerRef.current.signal(signal);
-        });
-        
-    }, [webrtcSocket]);
+          }
+        };
+      
+        const handleReceiveCall = ({ from, signal }) => {
+
+          if (peerRef.current) {
+            peerRef.current.destroy();
+          }
+      
+          peerRef.current = new Peer({
+            initiator: false,
+            trickle: false,
+            stream: CamRef.current?.srcObject,
+          });
+      
+          peerRef.current.signal(signal);
+      
+          peerRef.current.on('signal', signal => {
+            webrtcSocket.emit('sendAnswer', { to: from, signal: signal });
+          });
+      
+          peerRef.current.on('stream', remoteStream => {
+            if (client2Video.current) {
+              client2Video.current.srcObject = remoteStream;
+            }
+          });
+        };
+      
+        webrtcSocket.on('receiveAnswer', handleReceiveAnswer);
+        webrtcSocket.on('receiveCall', handleReceiveCall);
+      
+
+      }, [webrtcSocket, CamRef, client2Video]);
+
 
     useEffect(() => {
-        const changingPos =  onValue(ref(firebaseDatabase , 'users') , (data) => {
+        onValue(ref(firebaseDatabase , 'users') , (data) => {
             // console.log(data.val());
             dp(updateAllCharactersData(data.val()));              // Render all character from database
         });
         return () => off(ref(firebaseDatabase , 'users'));
     } , [dp]);
+
+    useEffect(() => {
+        const myInitData = {
+            ...MY_CHARACTER_INIT_CONFIG,
+            socketId: webrtcSocket.id,
+        };
+
+        addFirebase(ref(firebaseDatabase, `users/${MY_CHARACTER_INIT_CONFIG.id}`), myInitData); // Add data to firebase
+    },[]);
 
     useEffect(() => {
         if (context == null || myCharactersData == null) {
@@ -113,7 +127,12 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
         loadCharacter(true);
     }, [context, myCharactersData, loadCharacter]);
 
-    return null;
+    return (
+        <div className='videoDiv'>
+            <video ref={CamRef} autoPlay muted />
+            <video ref={client2Video} autoPlay muted />
+        </div>
+    ); ;
 }
 
 const mapStateToProps = (state) => {

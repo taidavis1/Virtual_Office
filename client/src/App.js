@@ -5,7 +5,6 @@ import Office from './components/Office';
 
 import './App.css';
 import { io } from 'socket.io-client';
-import Video from './components/Video';
 
 const WEBRTC_SOCKET = io('http://localhost:8080');
 
@@ -23,7 +22,6 @@ function App() {
               <GameLoop>
                 <Office webrtcSocket={WEBRTC_SOCKET}/>
               </GameLoop>
-              <Video />
           </main>
         }
         <footer>

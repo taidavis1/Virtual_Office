@@ -6,7 +6,6 @@ export default function Video(){
     const camRef = useRef(null);
 
     useEffect(() => {
-
         navigator.mediaDevices.getUserMedia({video: {width: 200}}).then(view => {
             let cam = camRef.current;
             cam.srcObject = view;
@@ -23,6 +22,7 @@ export default function Video(){
 
     return (
         <div className="videoDiv">
+            <video ref={camRef} />
             <video ref={camRef} />
         </div>
     )

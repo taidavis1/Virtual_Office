@@ -1,7 +1,6 @@
 const app = require("express")();
 const server = require("http").createServer(app);
 const cors = require("cors");
-const { SocketAddress } = require("net");
 const io = require("socket.io")(server, {
     cors: {
         origin: "*",
@@ -13,41 +12,41 @@ app.use(cors());
 const PORT = process.env.PORT || 8080;
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.send('Server is running and ready for WebRTC signaling.');
 });
 
 io.on("connection", (socket) => {
-
+    // Emit the connected socket's ID
     socket.emit("me", socket.id);
-
-    socket.on("sendCall" , (data) => {                       
-        socket.to(data.to).emit("sendCall" , {
+    
+    socket.on("sendCall", (data) => {                       
+        io.to(data.to).emit("receiveCall", {
             signal: data.signal,
-            from: data.from
+            from: socket.id
         });
-        console.log(data);
+        console.log('Offer sent from', socket.id, 'to', data.to);
     });
 
-    socket.on("receivedCall" , (data) => {
-        socket.to(data.to).emit('receivedCall' , {
+    socket.on("sendAnswer", (data) => {
+        io.to(data.to).emit("receiveAnswer", {
             signal: data.signal,
-            from: data.from
+            from: socket.id
         });
+        console.log('Answer sent from', socket.id, 'to', data.to);
     });
 
-    // socket.on("handleIce", (data) => {               // ICE handling
-    //     socket.to(data.to).emit("handleIce", {
+    // socket.on("sendIceCandidate", (data) => {
+    //     io.to(data.to).emit("receiveIceCandidate", {
     //         candidate: data.candidate,
-    //         to: data.to
+    //         from: socket.id
     //     });
+    //     console.log('ICE candidate sent from', socket.id, 'to', data.to);
     // });
 
-
-    socket.on("disconnect" , () => {
-        socket.broadcast.emit("End Call");
-    })
-
+    socket.on("disconnect", () => {
+        socket.broadcast.emit("End Call ", { from: socket.id });
+        console.log(socket.id, 'has disconnected');
+    });
 });
-
 
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
