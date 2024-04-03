@@ -11,7 +11,7 @@ export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket}){
         peerRef.current = new Peer({
             initiator: false,
             trickle: false,
-            stream: selfstream,
+            stream: selfstream.current.srcObject,
         });
 
         peerRef.current.on('signal', signal => {

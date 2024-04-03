@@ -11,7 +11,7 @@ export default function Initialized({socketFrom , selfstream , socketto , webrtc
         peerRef.current = new Peer({
             initiator: true,
             trickle: false,
-            stream: selfstream,
+            stream: selfstream.current.srcObject,
         });
 
         peerRef.current.on('signal', signal => {
@@ -32,7 +32,9 @@ export default function Initialized({socketFrom , selfstream , socketto , webrtc
 
     } , [webrtcSocket , selfstream , socketto , socketFrom]);
 
-    return <>
-        {otherVideo && <video ref={otherVideo} autoPlay = {true} />}
-    </>;
+    return (
+        <>
+            {otherVideo && <video ref={otherVideo} autoPlay={true} />}
+        </>
+    );
 };
