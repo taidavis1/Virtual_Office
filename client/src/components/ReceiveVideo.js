@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from "react";
 import Peer from "simple-peer";
 
-export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket}){
+export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket , socketto , callsignal}){
 
     const peerRef = useRef();
     const otherVideo = useRef(null);
+
 
     useEffect(() => { 
 
@@ -15,12 +16,10 @@ export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket}){
         });
 
         peerRef.current.on('signal', signal => {
-            webrtcSocket.emit('sendAnswer', { to: socketFrom, signal: signal });
+            webrtcSocket.emit('sendAnswer', { to: socketFrom, from: socketto, signal: signal });
         });
 
-        webrtcSocket.on('receiveCall', ({ from, signal }) => {
-            peerRef.current.signal(signal);
-        });
+        peerRef.current.signal(callsignal);
       
         peerRef.current.on('stream', remoteStream => {
             if (otherVideo.current) {
@@ -28,9 +27,9 @@ export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket}){
             }
         });
 
-    } , [socketFrom , selfstream , webrtcSocket]);
+    } , [socketFrom , selfstream , webrtcSocket , socketto]);
 
     return <>
-        {otherVideo && <video ref={otherVideo} autoPlay = {true} />}
-    </>;
+        {otherVideo && <video ref={otherVideo} autoPlay = {true} playsInline = {true} />}
+    </>
 }

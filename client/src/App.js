@@ -23,8 +23,8 @@ function App() {
           <main class="content">
               <GameLoop>
                 <Office webrtcSocket={WEBRTC_SOCKET}/>
-                <Video webrtcSocket={WEBRTC_SOCKET} />
               </GameLoop>
+              <Video webrtcSocket={WEBRTC_SOCKET} />
           </main>
         }
         <footer>

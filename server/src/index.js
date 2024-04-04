@@ -30,7 +30,8 @@ io.on("connection", (socket) => {
     socket.on("sendAnswer", (data) => {
         io.to(data.to).emit("receiveAnswer", {
             signal: data.signal,
-            from: socket.id
+            from: data.to,
+            to: socket.id
         });
         console.log('Answer sent from', socket.id, 'to', data.to);
     });

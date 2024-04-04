@@ -5,6 +5,7 @@ import {LAYERS, MAP_DIMENSIONS, TILE_SIZE} from './mapConstants';
 import CanvasContext from './CanvasContext';
 import {loadMap} from './slices/statusSlice';
 
+
 const mapDispatch = { loadMap };
 
 const Map = ({ loadMap }) => {
@@ -12,6 +13,7 @@ const Map = ({ loadMap }) => {
     const {COLS, ROWS} = MAP_DIMENSIONS;
 
     useEffect(() => {
+
         const drawLayer = grid => {
             for (let i = 0; i < ROWS; i++) {
                 for (let j = 0; j < COLS; j++) {
@@ -37,10 +39,10 @@ const Map = ({ loadMap }) => {
                 }
             }
         };
-
         drawLayer(LAYERS[0]);
         drawLayer(LAYERS[1]);
         loadMap(true);
+
     }, [COLS, ROWS, context, loadMap]);
 
     return null;

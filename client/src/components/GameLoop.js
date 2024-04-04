@@ -29,17 +29,24 @@ const GameLoop = ({children, allCharactersData}) => {
         var currentPosition = mycharacterData.position;
         const key = e.key;
         if (MOVE_DIRECTIONS[key]) {
-            // ***********************************************
-            // TODO: Add your move logic here
             
-            const newPos = {                         // Add current position to key data ex: key w store [0,-1] x = 0 , y = -1     
-                x: currentPosition.x + MOVE_DIRECTIONS[key][0],
-                y: currentPosition.y + MOVE_DIRECTIONS[key][1]
-            };
+            // Add current position to key data ex: key w store [0,-1] x = 0 , y = -1  
+            
+            if (!checkMapCollision(currentPosition.x + MOVE_DIRECTIONS[key][0] , currentPosition.y + MOVE_DIRECTIONS[key][1])){
+                
+                const newPos = {    
+                    x: currentPosition.x + MOVE_DIRECTIONS[key][0],
+                    y: currentPosition.y + MOVE_DIRECTIONS[key][1]
+                };
+                
+                updateFirebase(ref(firebaseDatabase ,`users/${MY_CHARACTER_INIT_CONFIG.id}` ) , {
+                    position: newPos
+                }) // update to firebase new position
+            }
 
-            updateFirebase(ref(firebaseDatabase ,`users/${MY_CHARACTER_INIT_CONFIG.id}` ) , {
-                position: newPos
-            }) // update to firebase new position
+            else{
+                console.log("Collision ")
+            }
 
             // dp(update({        // update character position with redux
             //     ...allCharactersData,

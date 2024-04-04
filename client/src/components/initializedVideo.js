@@ -6,6 +6,8 @@ export default function Initialized({socketFrom , selfstream , socketto , webrtc
     const peerRef = useRef();
     const otherVideo = useRef(null);
 
+    console.log(socketto);
+
     useEffect (() => {
 
         peerRef.current = new Peer({
@@ -34,7 +36,7 @@ export default function Initialized({socketFrom , selfstream , socketto , webrtc
 
     return (
         <>
-            {otherVideo && <video ref={otherVideo} autoPlay={true} />}
+            {otherVideo && <video ref={otherVideo} autoPlay = {true} playsInline = {true} />}
         </>
     );
 };
