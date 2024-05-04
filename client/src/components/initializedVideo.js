@@ -8,6 +8,15 @@ export default function Initialized({socketFrom , selfstream , socketto , webrtc
 
     console.log(socketto);
 
+    useEffect(() => {
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 200 } }).then(view => {
+            if (otherVideo.current){
+                otherVideo.current.srcObject = view;
+            }
+        })
+    } , []);
+
     useEffect (() => {
 
         peerRef.current = new Peer({

@@ -50,7 +50,6 @@ function Video({allCharactersData , webrtcSocket}){
             myCharacterData &&
                 <div className='videoDiv'>
                     <video ref={CamRef} autoPlay = {true} playsInline = {true} />
-
                     {filterData.map(oid => {
                         return <Initialized
                             key={oid.id}

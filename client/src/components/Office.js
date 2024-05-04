@@ -7,7 +7,7 @@ import CanvasContext from './CanvasContext';
 import MyCharacter from './MyCharacter';
 import {MAP_DIMENSIONS, TILE_SIZE, MAP_TILE_IMAGES} from './mapConstants';
 
-const Office = ({mapImagesLoaded, gameStatus, webrtcSocket}) => {
+const Office = ({mapImagesLoaded, gameStatus, webrtcSocket , name , setName , isOpen , setIsOpen}) => {
     const width = MAP_DIMENSIONS.COLS * TILE_SIZE;
     const height = MAP_DIMENSIONS.ROWS * TILE_SIZE;
     const context = useContext(CanvasContext);
@@ -28,7 +28,7 @@ const Office = ({mapImagesLoaded, gameStatus, webrtcSocket}) => {
                     </Grid>
                 </>
             }
-            {gameStatus.mapLoaded && <MyCharacter webrtcSocket={webrtcSocket}/>}
+            {gameStatus.mapLoaded && <MyCharacter name = {name} setName = {setName} isOpen = {isOpen} setIsOpen = {setIsOpen} webrtcSocket={webrtcSocket}/>}
         </>
     );
 };

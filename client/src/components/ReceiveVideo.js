@@ -6,6 +6,14 @@ export default function ReceiveVideo({socketFrom , selfstream , webrtcSocket , s
     const peerRef = useRef();
     const otherVideo = useRef(null);
 
+    useEffect(() => {
+
+        navigator.mediaDevices.getUserMedia({ video: { width: 200 } }).then(view => {
+            if (otherVideo.current){
+                otherVideo.current.srcObject = view;
+            }
+        })
+    } , []);
 
     useEffect(() => { 
 

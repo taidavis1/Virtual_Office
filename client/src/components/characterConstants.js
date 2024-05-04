@@ -13,7 +13,7 @@ export const CHARACTER_CLASSES_MAP = {
 };
 
 export const MY_CHARACTER_INIT_CONFIG = {
-    name: 'Amanda',
+    name: '',
     id: uuid(),
     position: {x: 12, y: 12},
     characterClass: 'ENGINEER',

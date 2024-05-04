@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from 'react';
+import React, {useEffect, useContext , useState} from 'react';
 import {connect, useDispatch} from 'react-redux';
 import {ref , set as addFirebase, onValue , off} from "firebase/database";
 import CanvasConext from './CanvasContext';
@@ -9,9 +9,24 @@ import { MY_CHARACTER_INIT_CONFIG } from './characterConstants';
 import {update as updateAllCharactersData} from './slices/allCharactersSlice'
 import { firebaseDatabase } from '../firebase/firebase';
 
-function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData, webrtcSocket }) {
+function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData, webrtcSocket , name , setName}) {
     const context = useContext(CanvasConext);
     const dp = useDispatch();
+
+    // const sendName = (Name) => {
+    //     const myInitData = {
+    //         ...MY_CHARACTER_INIT_CONFIG,
+    //         name: Name,
+    //         socketId: webrtcSocket.id,
+    //     };
+
+    //     addFirebase(ref(firebaseDatabase , `users/${MY_CHARACTER_INIT_CONFIG.id}`) , myInitData)  // Add data to firebase
+
+    //     setIsOpen(!isOpen);
+    //     setName("");
+    // }
+
+
     useEffect(() => {
 
         // Object.values(MY_CHARACTER_INIT_CONFIG).forEach(character => {
@@ -25,11 +40,14 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
 
         const myInitData = {
             ...MY_CHARACTER_INIT_CONFIG,
+            name: name,
             socketId: webrtcSocket.id,
         };
 
         addFirebase(ref(firebaseDatabase , `users/${MY_CHARACTER_INIT_CONFIG.id}`) , myInitData)  // Add data to firebase
-
+        setName("");
+        // setIsOpen(prevstate => !prevstate);
+        // setName("");
         // const users = {};
         // const myId = MY_CHARACTER_INIT_CONFIG.id;
         // users[myId] = myInitData;
@@ -64,6 +82,14 @@ function MyCharacter({ myCharactersData, loadCharacter, updateAllCharactersData,
                 character.position.y * TILE_SIZE,
                 CHARACTER_IMAGE_SIZE,
                 CHARACTER_IMAGE_SIZE
+            );
+            context.canvas.font = "20px Arial"; 
+            context.canvas.fillStyle = "white";
+            context.canvas.textAlign = "center";
+            context.canvas.fillText(
+                character.name,
+                character.position.x * TILE_SIZE + CHARACTER_IMAGE_SIZE / 2,
+                character.position.y * TILE_SIZE - 10
             );
         });
         loadCharacter(true);
